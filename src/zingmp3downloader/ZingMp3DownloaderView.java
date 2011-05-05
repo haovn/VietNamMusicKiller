@@ -586,7 +586,19 @@ public class ZingMp3DownloaderView extends FrameView {
       //filedownloader.FileDownloaderApp app=new FileDownloaderApp();
       //downloader.getFrame().setVisible(true);
       filedownloader.DialogDownloader dlg=new DialogDownloader(null, true);
+      // lấy danh sách các file cần download
+       // TODO add your handling code here:
+      //String text=txtURL.getText();
+
+      //String []text_arr=text.split("\n");
       
+      for(int i=0;i<this.zing.DanhSachBaiHatLevel3.size();i++)
+      {
+        dlg.file_list.add(this.zing.DanhSachBaiHatLevel3.get(i).toString());
+      }
+      
+      dlg.zing=this.zing;
+    
       dlg.setVisible(true);
       
     }//GEN-LAST:event_btnDownloadActionPerformed

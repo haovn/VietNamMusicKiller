@@ -35,6 +35,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import filedownloader.*;
+import zingmp3downloader.ZingMp3Class;
+import zingmp3downloader.ZingSongClass;
 
 /**
  *
@@ -42,11 +44,13 @@ import filedownloader.*;
  */
 public class DialogDownloader extends javax.swing.JDialog {
   // khai báo các thuộc tính
-    ArrayList file_list=new ArrayList();
+    public ArrayList file_list=new ArrayList();
     // quản lý danh sách tất cả downloader đang chạy
-    ArrayList<DownloadThread> dowloaders=new ArrayList<DownloadThread>();
-    
+    public ArrayList<DownloadThread> dowloaders=new ArrayList<DownloadThread>();
+    public ZingMp3Class zing;
     int row_selected_index;
+    int max_queue_size=2;// số lượng file tối đa được phép download cùng lúc
+    int current_queue_size=0;// số lượng file tối đa được phép download cùng lúc
   /** Creates new form DialogDownloader */
   public DialogDownloader(java.awt.Frame parent, boolean modal) {
     super(parent, modal);
@@ -62,14 +66,7 @@ public class DialogDownloader extends javax.swing.JDialog {
   // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
   private void initComponents() {
 
-    mainPanel = new javax.swing.JPanel();
-    jToolBar1 = new javax.swing.JToolBar();
-    btnURL = new javax.swing.JButton();
-    btnStart = new javax.swing.JButton();
-    btnPauseAll = new javax.swing.JButton();
-    btnResumAll = new javax.swing.JButton();
-    btnPauseOne = new javax.swing.JButton();
-    btnResumOne = new javax.swing.JButton();
+    jToolBar2 = new javax.swing.JToolBar();
     jPanel1 = new javax.swing.JPanel();
     jScrollPane1 = new javax.swing.JScrollPane();
     tableFiles = new javax.swing.JTable();
@@ -77,99 +74,26 @@ public class DialogDownloader extends javax.swing.JDialog {
     jLabel1 = new javax.swing.JLabel();
     btnSelectFolder = new javax.swing.JButton();
     jLabel2 = new javax.swing.JLabel();
+    jToolBar1 = new javax.swing.JToolBar();
+    btnURL = new javax.swing.JButton();
+    btnStart = new javax.swing.JButton();
+    btnPauseAll = new javax.swing.JButton();
+    btnResumAll = new javax.swing.JButton();
+    btnPauseOne = new javax.swing.JButton();
+    btnResumOne = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     setName("Form"); // NOI18N
+    addWindowListener(new java.awt.event.WindowAdapter() {
+      public void windowOpened(java.awt.event.WindowEvent evt) {
+        formWindowOpened(evt);
+      }
+    });
 
-    mainPanel.setName("mainPanel"); // NOI18N
+    jToolBar2.setRollover(true);
+    jToolBar2.setName("jToolBar2"); // NOI18N
 
-    jToolBar1.setRollover(true);
-    jToolBar1.setName("jToolBar1"); // NOI18N
-
-    btnURL.setIcon(null);
     org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(zingmp3downloader.ZingMp3DownloaderApp.class).getContext().getResourceMap(DialogDownloader.class);
-    btnURL.setText(resourceMap.getString("btnURL.text")); // NOI18N
-    btnURL.setToolTipText(resourceMap.getString("btnURL.toolTipText")); // NOI18N
-    btnURL.setFocusable(false);
-    btnURL.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    btnURL.setName("btnURL"); // NOI18N
-    btnURL.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    btnURL.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnURLActionPerformed(evt);
-      }
-    });
-    jToolBar1.add(btnURL);
-
-    btnStart.setIcon(null);
-    btnStart.setText(resourceMap.getString("btnStart.text")); // NOI18N
-    btnStart.setFocusable(false);
-    btnStart.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    btnStart.setName("btnStart"); // NOI18N
-    btnStart.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    btnStart.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnStartActionPerformed(evt);
-      }
-    });
-    jToolBar1.add(btnStart);
-
-    btnPauseAll.setIcon(null);
-    btnPauseAll.setText(resourceMap.getString("btnPauseAll.text")); // NOI18N
-    btnPauseAll.setEnabled(false);
-    btnPauseAll.setFocusable(false);
-    btnPauseAll.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    btnPauseAll.setName("btnPauseAll"); // NOI18N
-    btnPauseAll.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    btnPauseAll.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnPauseAllActionPerformed(evt);
-      }
-    });
-    jToolBar1.add(btnPauseAll);
-
-    btnResumAll.setIcon(null);
-    btnResumAll.setText(resourceMap.getString("btnResumAll.text")); // NOI18N
-    btnResumAll.setEnabled(false);
-    btnResumAll.setFocusable(false);
-    btnResumAll.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    btnResumAll.setName("btnResumAll"); // NOI18N
-    btnResumAll.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    btnResumAll.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnResumAllActionPerformed(evt);
-      }
-    });
-    jToolBar1.add(btnResumAll);
-
-    btnPauseOne.setIcon(null);
-    btnPauseOne.setText(resourceMap.getString("btnPauseOne.text")); // NOI18N
-    btnPauseOne.setEnabled(false);
-    btnPauseOne.setFocusable(false);
-    btnPauseOne.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    btnPauseOne.setName("btnPauseOne"); // NOI18N
-    btnPauseOne.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    btnPauseOne.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnPauseOneActionPerformed(evt);
-      }
-    });
-    jToolBar1.add(btnPauseOne);
-
-    btnResumOne.setIcon(null);
-    btnResumOne.setText(resourceMap.getString("btnResumOne.text")); // NOI18N
-    btnResumOne.setEnabled(false);
-    btnResumOne.setFocusable(false);
-    btnResumOne.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-    btnResumOne.setName("btnResumOne"); // NOI18N
-    btnResumOne.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-    btnResumOne.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnResumOneActionPerformed(evt);
-      }
-    });
-    jToolBar1.add(btnResumOne);
-
     jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceMap.getString("jPanel1.border.title"))); // NOI18N
     jPanel1.setName("jPanel1"); // NOI18N
 
@@ -222,12 +146,12 @@ public class DialogDownloader extends javax.swing.JDialog {
             .addComponent(jLabel1)
             .addGap(39, 39, 39)
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-              .addComponent(jLabel2)
+              .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 928, javax.swing.GroupLayout.PREFERRED_SIZE)
               .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(txtSaveTo, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
                 .addComponent(btnSelectFolder)))))
-        .addContainerGap(34, Short.MAX_VALUE))
+        .addContainerGap(22, Short.MAX_VALUE))
     );
     jPanel1Layout.setVerticalGroup(
       jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -239,48 +163,120 @@ public class DialogDownloader extends javax.swing.JDialog {
           .addComponent(txtSaveTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
           .addComponent(btnSelectFolder))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jLabel2)
-        .addContainerGap(204, Short.MAX_VALUE))
+        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 36, Short.MAX_VALUE)
+        .addContainerGap())
     );
 
-    javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
-    mainPanel.setLayout(mainPanelLayout);
-    mainPanelLayout.setHorizontalGroup(
-      mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(mainPanelLayout.createSequentialGroup()
-        .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-          .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 855, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        .addContainerGap(58, Short.MAX_VALUE))
-    );
-    mainPanelLayout.setVerticalGroup(
-      mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGroup(mainPanelLayout.createSequentialGroup()
-        .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-    );
+    jToolBar1.setRollover(true);
+    jToolBar1.setName("jToolBar1"); // NOI18N
+
+    btnURL.setIcon(resourceMap.getIcon("btnURL.icon")); // NOI18N
+    btnURL.setText(resourceMap.getString("btnURL.text")); // NOI18N
+    btnURL.setToolTipText(resourceMap.getString("btnURL.toolTipText")); // NOI18N
+    btnURL.setFocusable(false);
+    btnURL.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    btnURL.setName("btnURL"); // NOI18N
+    btnURL.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    btnURL.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnURLActionPerformed(evt);
+      }
+    });
+    jToolBar1.add(btnURL);
+
+    btnStart.setIcon(resourceMap.getIcon("btnStart.icon")); // NOI18N
+    btnStart.setText(resourceMap.getString("btnStart.text")); // NOI18N
+    btnStart.setFocusable(false);
+    btnStart.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    btnStart.setName("btnStart"); // NOI18N
+    btnStart.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    btnStart.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnStartActionPerformed(evt);
+      }
+    });
+    jToolBar1.add(btnStart);
+
+    btnPauseAll.setIcon(resourceMap.getIcon("btnPauseAll.icon")); // NOI18N
+    btnPauseAll.setText(resourceMap.getString("btnPauseAll.text")); // NOI18N
+    btnPauseAll.setEnabled(false);
+    btnPauseAll.setFocusable(false);
+    btnPauseAll.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    btnPauseAll.setName("btnPauseAll"); // NOI18N
+    btnPauseAll.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    btnPauseAll.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnPauseAllActionPerformed(evt);
+      }
+    });
+    jToolBar1.add(btnPauseAll);
+
+    btnResumAll.setIcon(resourceMap.getIcon("btnResumAll.icon")); // NOI18N
+    btnResumAll.setText(resourceMap.getString("btnResumAll.text")); // NOI18N
+    btnResumAll.setEnabled(false);
+    btnResumAll.setFocusable(false);
+    btnResumAll.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    btnResumAll.setName("btnResumAll"); // NOI18N
+    btnResumAll.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    btnResumAll.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnResumAllActionPerformed(evt);
+      }
+    });
+    jToolBar1.add(btnResumAll);
+
+    btnPauseOne.setIcon(resourceMap.getIcon("btnPauseOne.icon")); // NOI18N
+    btnPauseOne.setText(resourceMap.getString("btnPauseOne.text")); // NOI18N
+    btnPauseOne.setEnabled(false);
+    btnPauseOne.setFocusable(false);
+    btnPauseOne.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    btnPauseOne.setName("btnPauseOne"); // NOI18N
+    btnPauseOne.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    btnPauseOne.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnPauseOneActionPerformed(evt);
+      }
+    });
+    jToolBar1.add(btnPauseOne);
+
+    btnResumOne.setIcon(resourceMap.getIcon("btnResumOne.icon")); // NOI18N
+    btnResumOne.setText(resourceMap.getString("btnResumOne.text")); // NOI18N
+    btnResumOne.setEnabled(false);
+    btnResumOne.setFocusable(false);
+    btnResumOne.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+    btnResumOne.setName("btnResumOne"); // NOI18N
+    btnResumOne.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+    btnResumOne.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnResumOneActionPerformed(evt);
+      }
+    });
+    jToolBar1.add(btnResumOne);
 
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 1148, Short.MAX_VALUE)
-      .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(layout.createSequentialGroup()
-          .addGap(0, 116, Short.MAX_VALUE)
-          .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addGap(0, 117, Short.MAX_VALUE)))
+      .addGroup(layout.createSequentialGroup()
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+          .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addGroup(layout.createSequentialGroup()
+            .addContainerGap()
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+              .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+        .addGap(54, 54, 54))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addGap(0, 681, Short.MAX_VALUE)
-      .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-        .addGroup(layout.createSequentialGroup()
-          .addGap(0, 14, Short.MAX_VALUE)
-          .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 652, javax.swing.GroupLayout.PREFERRED_SIZE)
-          .addGap(0, 15, Short.MAX_VALUE)))
+      .addGroup(layout.createSequentialGroup()
+        .addContainerGap()
+        .addComponent(jToolBar2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(18, 18, 18)
+        .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addGap(18, 18, 18)
+        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap(22, Short.MAX_VALUE))
     );
 
     pack();
@@ -292,14 +288,15 @@ public class DialogDownloader extends javax.swing.JDialog {
       JOptionPane.showMessageDialog(null, "Please select folder to save file");
       return;
     }
-    filedownloader.DialogAddURL dlg=new DialogAddURL(new JFrame(), rootPaneCheckingEnabled);
-    dlg.show();
-    
+    filedownloader.DialogAddURLs dlg=new DialogAddURLs(new JFrame(), true);
+    dlg.setVisible(true);
+   
     this.txtSaveTo.setEnabled(false);
     this.btnSelectFolder.setEnabled(false);
     // sau khi người dùng đóng dialog, sẽ lấy được danh sách các URL người dùng đưa vào
     
     this.file_list=dlg.file_list;
+    
     
     // lấy các file này đưa lên danh sách sẵn sàng đownload
     Vector header= new Vector();
@@ -371,18 +368,19 @@ public class DialogDownloader extends javax.swing.JDialog {
       JOptionPane.showMessageDialog(null, "No file to start. Please add some URLs");
     }
     btnPauseAll.setEnabled(true);
-    // duyệt qua danh sách các downloader
-    for(int i=0;i<this.dowloaders.size();i++) {
-      dowloaders.get(i).start();
-      // thực hiện cập nhật lại giá trị của table tương ứng với thread này
-      
-    }
+    QueueDownloadThread queue=new QueueDownloadThread();
+    queue.dowloaders=this.dowloaders;
+    queue.start();
+    
+   
 }//GEN-LAST:event_btnStartActionPerformed
 
   private void btnPauseAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPauseAllActionPerformed
     // TODO add your handling code here:
-    for(int i=0;i<this.dowloaders.size();i++) {
+    
+    for(int  i=0;i<this.max_queue_size;i++) {
       dowloaders.get(i).dl.pause();
+     
       // thực hiện cập nhật lại giá trị của table tương ứng với thread này
       
     }
@@ -466,6 +464,84 @@ public class DialogDownloader extends javax.swing.JDialog {
     }
   }//GEN-LAST:event_btnSelectFolderActionPerformed
 
+  private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+    // TODO add your handling code here:
+    // tạo 1 thư mục chứa các file download 
+    File file=new File("MusicDownload/Music");
+    if(file.exists()==false)
+    {
+      file.mkdirs();
+    }
+    this.txtSaveTo.setText("MusicDownload/Music/");
+    // duyệt qua danh sách các file list và hiển thị lên table
+    if(this.file_list!=null)
+    {
+      // lấy các file này đưa lên danh sách sẵn sàng đownload
+      Vector header= new Vector();
+      header.add("ID");
+      header.add("File name");
+      header.add("Size (Kb)");
+      header.add("Percent");
+      //tao mot tablemodel de chua jtable
+      DefaultTableModel model = new DefaultTableModel(header,0);
+      tableFiles.setModel(model);
+
+      for (Integer i=0;i<this.file_list.size();i++) {
+        Downloader dl = null;
+        String strURL=(String)file_list.get(i);
+        URL url=null;
+        try {
+          url = new URL(strURL);
+        } catch (MalformedURLException ex) {
+          Logger.getLogger(FileDownloaderView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String filename=url.getFile();
+        File f=new File(filename);
+        String name=f.getName();
+        name=name.replaceAll("%20", " ") ;
+
+        // khỡi tạo 1 Downloader tương ứng với 1 url
+        //dl=new Downloader(new URL(strURL), new File(i.toString()+".txt"));
+        //dowloaders.add(dl);
+        // khỡi tạo thead để thực hiện download
+        //zingmp3downloader.ZingMp3Class zing=new ZingMp3Class();
+        zingmp3downloader.ZingSongClass song=new ZingSongClass();
+        song=zing.DanhSachBaiHatLevel4.get(i);
+        String friendly_name=song.TenBaiHat+".mp3";
+        DownloadThread dlthread=new DownloadThread();
+        dlthread.strURL=strURL;
+        dlthread.friendly_name=friendly_name;
+        dlthread.file_name_to_save=txtSaveTo.getText();
+        //dlthread.start();// chờ người dùng chọn nút start thì mới download
+        dlthread.tableFile=this.tableFiles;
+        dlthread.row_index=i;
+        this.dowloaders.add(dlthread);
+        // lưu danh sách này vào
+        Vector row = new Vector();
+
+        //String messageId=messages[i].message_id;//nếu mail được lưu trong local thì giá tri nay = null
+        //String id=i.toString();
+        //String filename="xxxx"+i.toString();//@ todo:
+        //Integer filesize_temp="size";
+        //String filesize="Size";
+        //Integer percent="Percent";
+        //String percent="0%";
+        row.add(i.toString());
+        row.add(friendly_name);
+        row.add(f.length());
+        row.add("0%");
+
+
+
+        model.addRow(row);
+
+
+
+
+      }
+    }
+  }//GEN-LAST:event_formWindowOpened
+
   /**
    * @param args the command line arguments
    */
@@ -497,7 +573,7 @@ public class DialogDownloader extends javax.swing.JDialog {
   private javax.swing.JPanel jPanel1;
   private javax.swing.JScrollPane jScrollPane1;
   private javax.swing.JToolBar jToolBar1;
-  private javax.swing.JPanel mainPanel;
+  private javax.swing.JToolBar jToolBar2;
   private javax.swing.JTable tableFiles;
   private javax.swing.JTextField txtSaveTo;
   // End of variables declaration//GEN-END:variables

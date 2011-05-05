@@ -21,6 +21,8 @@ public class DownloadThread extends Thread{
   public JTable tableFile=new JTable();
   public int row_index;
   Downloader dl = null;
+  public int current_queue_size;
+  public String friendly_name;// tên thân thiện của bài hat VD: Mua Rung - Cam Ly.mp3
   // khai báo các phương thức
   public void run()
   {
@@ -77,6 +79,9 @@ public class DownloadThread extends Thread{
         }
       }
       this.tableFile.setValueAt("Completed", row_index, 3);
+      // sau khi download xong tự động rename file lại tên thân thiện
+      real_name.renameTo(new File(this.file_name_to_save+this.friendly_name));
+      //this.current_queue_size--;// giảm số lượng phần tử trong hàng đợi xuống
     } catch (MalformedURLException ex) {
       Logger.getLogger(DownloadThread.class.getName()).log(Level.SEVERE, null, ex);
     }
