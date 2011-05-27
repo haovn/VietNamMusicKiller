@@ -56,6 +56,7 @@ public class ZingMp3Class {
          //------------------------------------------------------------//
 
          u = new URL(URL);
+         System.out.println(URL);
     
          //----------------------------------------------//
          // Step 3:  Open an input stream from the url.  //
@@ -268,10 +269,10 @@ public class ZingMp3Class {
   public String getFileInObjectTag(String text)
   {
     String result="";
-    int first_index=text.indexOf("xmlURL=");
-    int last_index=text.indexOf(">");
+    int first_index=text.indexOf("file=");
+    int last_index=text.indexOf(" />");
     
-    result=text.substring(first_index+7, last_index-1);
+    result=text.substring(first_index+5, last_index-1);
     return result;
             
   }
@@ -334,11 +335,11 @@ public class ZingMp3Class {
   public String LayLinkThucSuCuaBaiHat(String url)
   {
     StringBuffer content=getContentFromURL(url);
-    int first_index=content.indexOf("<source>");
-    int last_index=content.indexOf("</source>");
+    int first_index=content.indexOf("<location>");
+    int last_index=content.indexOf("</location>");
     if(first_index!=-1 && last_index!=-1)
     {
-      String link=content.substring(first_index+8, last_index)+"?q=f1e0500cea824fa761b7d35c530c17da&t=60342336";
+      String link=content.substring(first_index+19, last_index-3);//+"?q=f1e0500cea824fa761b7d35c530c17da&t=60342336";
       this.DanhSachBaiHatLevel3.add(new StringBuffer(link));
       return link;//thêm phần đuôi này mới lấy được file :((
     }
@@ -383,13 +384,13 @@ public class ZingMp3Class {
     String url=this.DanhSachBaiHatLevel2.get(stt).toString();
     StringBuffer content=getContentFromURL(url);
     int first_index_baihat=content.indexOf("<title><![CDATA[ ");
-    int first_index_casi=content.indexOf("<singer><![CDATA[ ");
+    int first_index_casi=content.indexOf("<annotation><![CDATA[");
     
     int last_index_baihat=content.indexOf(" ]]></title>");
-    int last_index_casi=content.indexOf(" ]]></singer>");
+    int last_index_casi=content.indexOf(" ]]></annotation>");
     
     String tenbaihat=content.substring(first_index_baihat+17, last_index_baihat);
-    String tencasi=content.substring(first_index_casi+18, last_index_casi);
+    String tencasi=content.substring(first_index_casi+21, last_index_casi);
     
     
     String string=tenbaihat+" - "+tencasi;
